@@ -1,0 +1,113 @@
+#include<iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <cstdlib>
+#include <vector>
+
+using namespace std;
+
+class interval{
+public:
+  int *st;
+  int *en;
+  
+  public:
+  interval(int *start,int *end){
+    st = start;
+    en =end;
+  }
+};
+int main()
+{
+  //Basic file handling:
+  ifstream fin;
+  string name;
+  cout<<"Enter name of file = ";
+  cin>>name;
+  fin.open(name);
+
+  string line; // making a string using inbuilt class string
+
+  int count =0;
+  int i=0;
+
+  vector<string> a;  //making a vector by using vector class
+
+//values are put in a from the file
+  while(getline(fin, line))
+    {
+       a.push_back(line);
+       i++;
+       count++;
+    }
+
+  string arr[3][count]; //making another string array to store breaked string values
+
+//braking the string using sstream class:
+  for(i=0;i<count;i++)
+  {
+    int j=0;
+
+    stringstream ssin(a[i]);
+
+    while(ssin.good() && j<3)
+    {
+      ssin>>arr[j][i];
+      ++j;
+    }
+  }
+
+  int cou[count],ar[3][count];
+
+//converting string into int using stoi() function and storing it in another array ar
+  for(i=0;i<count;i++)
+  {
+    ar[0][i]=0;
+    ar[1][i]=stoi(arr[1][i]);
+    ar[2][i]=stoi(arr[2][i]);
+    ar[2][i]=ar[1][i]+ ar[2][i];
+  }
+
+  int *star = ar[1];
+  int *en = ar[2];
+  
+  for(i=0;i<count;i++)
+	{		
+		for(int j=i+1;j<count;j++)
+		{
+			if(arr[i]>arr[j])
+			{
+				int temp  =en[i];
+				en[i]=en[j];
+				en[j]=temp;
+			}
+		}
+	}
+  int res=0;
+  int prevEnd = en[0];
+  
+  for(interval i(star,en))
+  {
+    if(*i.st >= prevEnd){
+      res++;
+      prevEnd = *i.en;
+  }
+    
+    cout<<res<<endl;
+  }
+  
+   for(i=0;i<count;i++)
+   {
+      cou[i]=0;
+
+     for(int j=0;j<count;j++)
+     {
+       if((ar[1][j]>=ar[1][i]&&ar[1][j]<ar[2][i])||(ar[2][j]>ar[1][i]&&ar[2][j]<=ar[2][i]));
+         cou[i]+=1;
+         
+     }
+   }
+
+  fin.close();
+}
